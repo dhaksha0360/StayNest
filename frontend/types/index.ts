@@ -1,0 +1,51 @@
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: "customer" | "manager" | "admin";
+  avatar_path?: string;
+};
+export type Image = {
+  id: number;
+  path: string;
+  alt_text?: string;
+  is_cover: boolean;
+};
+export type Amenity = { id: number; name: string; icon?: string };
+export type Property = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  type: string;
+  address: string;
+  city: string;
+  country: string;
+  max_guests: number;
+  bedrooms: number;
+  beds: number;
+  bathrooms: string;
+  base_price: number;
+  cleaning_fee: number;
+  service_fee: number;
+  tax_percentage: string;
+  minimum_nights: number;
+  maximum_nights: number;
+  check_in_time: string;
+  check_out_time: string;
+  cancellation_policy: string;
+  booking_type: string;
+  rating: string;
+  review_count: number;
+  images: Image[];
+  amenities: Amenity[];
+  manager?: User;
+  rules?: { id: number; rule: string }[];
+};
+export type Paginated<T> = {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  total: number;
+};
+export type ApiResponse<T> = { success: boolean; message: string; data: T };

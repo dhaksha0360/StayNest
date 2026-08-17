@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8fa;
+  --foreground: #18202b;
+  --card: #ffffff;
+  --card-foreground: #18202b;
+  --primary: #17324d;
+  --primary-foreground: #ffffff;
+  --secondary: #e7f3f2;
+  --secondary-foreground: #176b68;
+  --muted: #f0f2f5;
+  --muted-foreground: #657180;
+  --accent: #e6f5f3;
+  --accent-foreground: #126460;
+  --destructive: #c6383e;
+  --border: #e1e5ea;
+  --input: #d8dde4;
+  --ring: #23827e;
+  --success: #207a54;
+  --warning: #a26207;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: "Geist", "Inter", "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Geist", "Inter", "Segoe UI", Arial, sans-serif;
+  line-height: 1.55;
+}
+button,
+a {
+  transition-property:
+    color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 180ms;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+input,
+select,
+textarea {
+  outline: none;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 16%, transparent);
+}
+::selection {
+  background: #bce6e2;
+  color: #17324d;
+}
+
+.dark {
+  --background: #10151b;
+  --foreground: #edf1f5;
+  --card: #171d24;
+  --card-foreground: #edf1f5;
+  --primary: #e8eef4;
+  --primary-foreground: #172330;
+  --secondary: #173c3b;
+  --secondary-foreground: #bfe7e3;
+  --muted: #222a33;
+  --muted-foreground: #a4afbb;
+  --accent: #173c3b;
+  --accent-foreground: #c7ebe7;
+  --border: #2c3540;
+  --input: #35404c;
+  --ring: #4bb6b0;
+}
+
+.fc {
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: var(--card);
+  --fc-neutral-bg-color: var(--muted);
+  --fc-today-bg-color: color-mix(in srgb, var(--ring) 9%, transparent);
+  font-size: 0.875rem;
+}
+.fc .fc-toolbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.fc .fc-button-primary {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: none;
+  text-transform: capitalize;
+}
+.fc .fc-button-primary:hover,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  padding: 0.55rem;
+}
+.fc .fc-event {
+  border-radius: 0.35rem;
+  border: 0;
+  padding: 0.1rem 0.25rem;
+  font-size: 0.7rem;
+}
