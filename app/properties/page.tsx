@@ -20,6 +20,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
 import type { ApiResponse, Paginated, Property } from "@/types";
+import { getMockProperties } from "@/lib/mock-properties";
 
 type Amenity = { id: number; name: string };
 function FilterPanel({
@@ -160,9 +161,14 @@ function Results() {
   query.set("sort", sort);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["properties", query.toString()],
-    queryFn: async () =>
-      (await api.get<ApiResponse<Paginated<Property>>>(`/properties?${query}`))
-        .data.data,
+    queryFn: async () => {
+      try {
+        const result = (await api.get<ApiResponse<Paginated<Property>>>(`/properties?${query}`)).data.data;
+        return result.data.length ? result : getMockProperties(query);
+      } catch {
+        return getMockProperties(query);
+      }
+    },
   });
   const { data: amenities = [] } = useQuery<Amenity[]>({
     queryKey: ["amenities"],

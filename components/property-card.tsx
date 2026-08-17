@@ -7,10 +7,13 @@ import type { Property } from "@/types";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { isMockProperty } from "@/lib/mock-properties";
 
 export function PropertyCard({ property }: { property: Property }) {
   const [saved, setSaved] = useState(false);
   const favourite = async () => {
+    if (isMockProperty(property))
+      return toast.info("Demo properties cannot be saved until the live catalogue is available");
     if (!localStorage.getItem("staynest_token"))
       return toast.error("Sign in to save properties");
     try {

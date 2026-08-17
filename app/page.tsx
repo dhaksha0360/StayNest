@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { api, cn } from "@/lib/api";
 import type { ApiResponse, Paginated, Property } from "@/types";
+import { mockProperties } from "@/lib/mock-properties";
 
 const destinations = [
   [
@@ -43,12 +44,18 @@ const destinations = [
 export default function Home() {
   const { data, isLoading } = useQuery({
     queryKey: ["featured"],
-    queryFn: async () =>
-      (
+    queryFn: async () => {
+      try {
+        const properties = (
         await api.get<ApiResponse<Paginated<Property>>>(
           "/properties?per_page=6",
         )
-      ).data.data.data,
+        ).data.data.data;
+        return properties.length ? properties : mockProperties;
+      } catch {
+        return mockProperties;
+      }
+    },
   });
   return (
     <>

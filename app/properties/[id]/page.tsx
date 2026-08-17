@@ -33,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { findMockProperty, isMockProperty } from "@/lib/mock-properties";
 export default function PropertyDetails() {
   const { id } = useParams();
   const router = useRouter();
@@ -47,8 +48,16 @@ export default function PropertyDetails() {
   const [contactSending, setContactSending] = useState(false);
   const { data: p, isLoading } = useQuery({
     queryKey: ["property", id],
-    queryFn: async () =>
-      (await api.get<ApiResponse<Property>>(`/properties/${id}`)).data.data,
+    queryFn: async () => {
+      const fallback = findMockProperty(String(id));
+      if (fallback) return fallback;
+      try {
+        return (await api.get<ApiResponse<Property>>(`/properties/${id}`)).data.data;
+      } catch (error) {
+        if (fallback) return fallback;
+        throw error;
+      }
+    },
   });
   const quote = useMutation({
     mutationFn: async () =>
@@ -63,6 +72,8 @@ export default function PropertyDetails() {
       </>
     );
   const book = () => {
+    if (isMockProperty(p))
+      return toast.info("This is a demo listing. Add it to the backend before accepting bookings.");
     if (!localStorage.getItem("staynest_token"))
       return router.push(`/login?next=/properties/${id}`);
     if (!dates.check_in || !dates.check_out)
@@ -80,6 +91,8 @@ export default function PropertyDetails() {
     quote.mutate();
   };
   const contactManager = async () => {
+    if (isMockProperty(p))
+      return toast.info("Messaging is unavailable for demonstration listings");
     if (!localStorage.getItem("staynest_token"))
       return router.push(`/login?next=/properties/${id}`);
     if (!contactMessage.trim() || !p.manager) return;
@@ -103,6 +116,8 @@ export default function PropertyDetails() {
     }
   };
   const favourite = async () => {
+    if (isMockProperty(p))
+      return toast.info("Demo properties cannot be saved until the live catalogue is available");
     if (!localStorage.getItem("staynest_token"))
       return router.push(`/login?next=/properties/${id}`);
     await api.post(`/favourites/${id}`);
@@ -124,6 +139,11 @@ export default function PropertyDetails() {
           <div className="flex gap-2 text-xs font-medium text-muted-foreground">
             Properties <span>/</span> {p.city}
           </div>
+          {isMockProperty(p) && (
+            <div className="mt-3 inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800 ring-1 ring-amber-200">
+              Demonstration listing — browsing only
+            </div>
+          )}
           <div className="mt-3 flex flex-col justify-between gap-3 md:flex-row">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -186,7 +206,13 @@ export default function PropertyDetails() {
                 Unavailable dates are shaded. Choose exact dates in the booking
                 panel.
               </p>
-              <AvailabilityPreview propertyId={p.id} />
+              {isMockProperty(p) ? (
+                <p className="mt-5 rounded-xl border bg-muted/40 p-5 text-sm text-muted-foreground">
+                  Live availability will appear when this property is added to the StayNest catalogue.
+                </p>
+              ) : (
+                <AvailabilityPreview propertyId={p.id} />
+              )}
             </section>
             <section className="border-t py-8">
               <h2 className="text-xl font-semibold">What this place offers</h2>
@@ -268,11 +294,13 @@ export default function PropertyDetails() {
                 loading="lazy"
               />
             </section>
-            <PropertyReviews
-              propertyId={p.id}
-              rating={Number(p.rating)}
-              count={p.review_count}
-            />
+            {!isMockProperty(p) && (
+              <PropertyReviews
+                propertyId={p.id}
+                rating={Number(p.rating)}
+                count={p.review_count}
+              />
+            )}
           </div>
           <aside className="h-fit rounded-xl border bg-card p-6 shadow-[0_12px_30px_rgba(15,23,42,.08)] lg:sticky lg:top-24">
             <div>

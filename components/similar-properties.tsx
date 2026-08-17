@@ -2,6 +2,7 @@
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { PropertyCard } from "./property-card";
+import { mockProperties } from "@/lib/mock-properties";
 export function SimilarProperties({
   city,
   exclude,
@@ -11,9 +12,14 @@ export function SimilarProperties({
 }) {
   const { data } = useQuery({
     queryKey: ["similar", city],
-    queryFn: async () =>
-      (await api.get("/properties", { params: { city, per_page: 4 } })).data
-        .data.data,
+    queryFn: async () => {
+      try {
+        const properties = (await api.get("/properties", { params: { city, per_page: 4 } })).data.data.data;
+        return properties.length ? properties : mockProperties;
+      } catch {
+        return mockProperties;
+      }
+    },
   });
   const items = data?.filter((p: any) => p.id !== exclude).slice(0, 3) ?? [];
   if (!items.length) return null;
