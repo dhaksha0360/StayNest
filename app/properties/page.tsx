@@ -164,7 +164,9 @@ function Results() {
     queryFn: async () => {
       try {
         const result = (await api.get<ApiResponse<Paginated<Property>>>(`/properties?${query}`)).data.data;
-        return result.data.length ? result : getMockProperties(query);
+        if (result.data.length) return result;
+        const catalogue = (await api.get<ApiResponse<Paginated<Property>>>("/properties?per_page=1")).data.data;
+        return catalogue.total === 0 ? getMockProperties(query) : result;
       } catch {
         return getMockProperties(query);
       }
